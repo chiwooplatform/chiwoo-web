@@ -8,8 +8,8 @@ spring:
     username: aider
     password: aider1234
     driver-class-name: org.mariadb.jdbc.Driver
-    initialize: false
-    schema: classpath:schema.ddl,classpath:schema-imports.sql
+#    initialize: false
+#    schema: classpath:schema.ddl,classpath:schema-imports.sql
 
 # REDIS (RedisProperties)
   redis:
