@@ -1,0 +1,38 @@
+
+logging:
+  config: classpath:logback.xml
+
+spring:
+  datasource:
+    url: jdbc:mariadb://192.168.56.11:3306/SAMPLES
+    username: aider
+    password: aider1234
+    driver-class-name: org.mariadb.jdbc.Driver
+    initialize: false
+    schema: classpath:schema.ddl,classpath:schema-imports.sql
+
+# REDIS (RedisProperties)
+  redis:
+    database: 0
+    host: 192.168.56.11
+    password: root1234
+    # url: redis://user:password@example.com:6379
+    port: 6379
+    pool:
+      max-active: 8
+      max-idle: 8
+      max-wait: -1
+      min-idle: 0
+
+
+#spring:
+#  messages:
+#    basename: classpath:i18n/message
+#    cache-seconds: 10
+#    encoding: UTF-8
+#    fallback-to-system-locale: true
+  
+---
+spring:
+  profiles: dev
+
