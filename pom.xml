@@ -4,12 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.chiwooplatform</groupId>
-	<artifactId>chiwoo-validation</artifactId>
+	<artifactId>chiwoo-web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>chiwoo-validation</name>
-	<description>mybatis-plugin</description>
+	<name>chiwoo-web</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -63,4 +62,5 @@
 	</build>
 
 
+	<description>chiwoo-web</description>
 </project>
