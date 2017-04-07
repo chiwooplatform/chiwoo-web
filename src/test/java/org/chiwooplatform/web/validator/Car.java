@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-03-29
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.web.validator;
 
 import javax.validation.constraints.Min;

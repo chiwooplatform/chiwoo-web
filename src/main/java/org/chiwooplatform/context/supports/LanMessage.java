@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-03-31
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.context.supports;
 
 public class LanMessage {

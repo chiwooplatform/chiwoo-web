@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-03-27
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.web.message;
 
 import static org.junit.Assert.assertNotNull;

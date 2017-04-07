@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-03-29
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.context;
 
 public final class Constants {
@@ -43,5 +38,5 @@ public final class Constants {
 
     public static final String VALID_MESSAGE_PREFIX = "validation.";
 
-    public static final String I18N_NAMESPACE = "COMMETA_I18N";
+    public static final String I18N_NAMESPACE = "LOCALE_I18N";
 }
