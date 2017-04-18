@@ -1,9 +1,10 @@
 package org.chiwooplatform.web.exception;
 
+import org.springframework.http.HttpStatus;
+
 import org.chiwooplatform.web.exception.client.BadRequestException;
 import org.chiwooplatform.web.exception.client.InvalidMessageException;
 import org.chiwooplatform.web.message.ErrorMessage;
-import org.springframework.http.HttpStatus;
 
 public class GeneralException
     extends RuntimeException {
@@ -31,7 +32,7 @@ public class GeneralException
                 InvalidMessageException ire = (InvalidMessageException) e;
                 this.exception = ire;
             } else {
-                BadRequestException bre = new BadRequestException( httpStatus, e, e.getMessage() );
+                BadRequestException bre = new BadRequestException( e.getMessage(), e, httpStatus, transactionId );
                 this.exception = bre;
             }
         } else {

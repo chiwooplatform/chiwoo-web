@@ -1,17 +1,14 @@
 package org.chiwooplatform.web.supports;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.chiwooplatform.context.Constants;
-import org.chiwooplatform.web.exception.GeneralException;
 import org.springframework.http.HttpStatus;
 
+import org.chiwooplatform.web.exception.GeneralException;
+import org.chiwooplatform.web.exception.client.NotFoundException;
+ 
 /**
  * <pre>
  * Request 요청 데이타를 처리함에 있어 공통적으로 처리 될 수 있는 유틸리티성 기능들을 제공하는 클래스
@@ -48,7 +45,7 @@ public final class WebUtils {
                     + "\npathVariables is " + Arrays.toString( pathVariables ) );
             }
         } else {
-            throw new RuntimeException( "path valiable is null, abd sourceUri is " + sourceUri );
+            throw new RuntimeException( "path valiable is null, and sourceUri is " + sourceUri );
         }
         return resultUri;
     }
@@ -83,111 +80,19 @@ public final class WebUtils {
     }
 
     /**
-     * value 값이 없다면 defaultValue 값을 리턴 한다.
-     *
-     * @param value
-     * @param defaultValue
-     * @return
-     */
-    public static String nvl( String value, String defaultValue ) {
-        if ( value != null ) {
-            return value;
-        } else {
-            return defaultValue;
-        }
-    }
-
-    /**
-     * value 값이 없다면 defaultValue 값을 리턴 한다.
-     *
-     * @param value
-     * @param defaultValue
-     * @return
-     */
-    public static Integer nvl( Integer value, Integer defaultValue ) {
-        if ( value != null ) {
-            return value;
-        } else {
-            return defaultValue;
-        }
-    }
-
-    /**
-     * value 파라미터 값을 integer 객체의 값으로 변환한 값을 리턴
-     *
-     * @param value 소스 객체 값
-     * @return integer 형 변환 객체 값
-     */
-    public static Integer getInteger( Object value ) {
-        if ( value == null ) {
-            return null;
-        }
-        if ( value instanceof Integer ) {
-            return (Integer) value;
-        }
-        if ( value instanceof String ) {
-            return Integer.valueOf( (String) value );
-        } else if ( value instanceof BigDecimal ) {
-            return ( (BigDecimal) value ).intValue();
-        } else if ( value instanceof BigInteger ) {
-            return ( (BigInteger) value ).intValue();
-        } else if ( value instanceof Long ) {
-            return ( (Long) value ).intValue();
-        }
-        return (Integer) value;
-    }
-
-    /**
-     * value 파라미터 값을 Long 객체의 값으로 변환한 값을 리턴
-     *
-     * @param value 소스 객체 값
-     * @return Long 형 변환 객체 값
-     */
-    public static Long getLong( Object value ) {
-        if ( value == null ) {
-            return null;
-        }
-        if ( value instanceof Integer ) {
-            return (Long) value;
-        } else if ( value instanceof BigDecimal ) {
-            return ( (BigDecimal) value ).longValue();
-        } else if ( value instanceof BigInteger ) {
-            return ( (BigInteger) value ).longValue();
-        } else if ( value instanceof Long ) {
-            return ( (Long) value ).longValue();
-        }
-        return (Long) value;
-    }
-
-    /**
-     * @param value
-     * @return delimiterValues
-     */
-    public static String[] getDelimiterValues( final String value ) {
-        if ( value == null ) {
-            return new String[] { "0" };
-        }
-        StringTokenizer token = new StringTokenizer( value, Constants.DEFAULT_DELIMITER );
-        LinkedList<String> set = new LinkedList<>();
-        while ( token.hasMoreTokens() ) {
-            set.add( token.nextToken() );
-        }
-        if ( set.size() < 1 ) {
-            return new String[] { value };
-        }
-        String[] arrays = set.toArray( new String[set.size()] );
-        return arrays;
-    }
-
-    /**
      * Controller 의 최종 예외를 판단 하여 GeneralException 을 던집니다.
      *
-     * @param e
+     * @param e Exception
+     * @return GeneralException
      */
-    public static GeneralException throwException( Exception e ) {
+    public static GeneralException generalException( Exception e ) {
         if ( e instanceof GeneralException ) {
             return (GeneralException) e;
         }
         return new GeneralException( e, HttpStatus.INTERNAL_SERVER_ERROR );
+    }
+
+    public static NotFoundException notFoundException() {
+        return new NotFoundException( "Resource not found." );
     }
 }

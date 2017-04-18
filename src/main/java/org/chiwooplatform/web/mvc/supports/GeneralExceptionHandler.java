@@ -1,21 +1,13 @@
 package org.chiwooplatform.web.mvc.supports;
 
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.nio.file.AccessDeniedException;
 
 import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.chiwooplatform.context.Constants;
-import org.chiwooplatform.web.exception.GeneralException;
-import org.chiwooplatform.web.exception.client.BadRequestException;
-import org.chiwooplatform.web.exception.client.InvalidMessageException;
-import org.chiwooplatform.web.exception.client.NotAcceptableException;
-import org.chiwooplatform.web.message.ErrorMessage;
-import org.chiwooplatform.web.message.ItemError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +40,18 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.util.WebUtils;
 
+import org.chiwooplatform.context.Constants;
+import org.chiwooplatform.context.ContextHolder;
+import org.chiwooplatform.web.exception.GeneralException;
+import org.chiwooplatform.web.exception.ServiceException;
+import org.chiwooplatform.web.exception.client.BadRequestException;
+import org.chiwooplatform.web.exception.client.InvalidMessageException;
+import org.chiwooplatform.web.exception.client.TraceableException;
+import org.chiwooplatform.web.message.ErrorMessage;
+import org.chiwooplatform.web.message.ItemError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @ControllerAdvice
 public class GeneralExceptionHandler {
 
@@ -71,6 +75,7 @@ public class GeneralExceptionHandler {
      * @param headers the headers for the response
      * @param status the response status
      * @param request the current request
+     * @return ResponseEntity&#60;Object&#62;
      */
     protected ResponseEntity<Object> handleExceptionInternal( Exception ex, Object body, HttpHeaders headers,
                                                               HttpStatus status, WebRequest request ) {
@@ -84,7 +89,7 @@ public class GeneralExceptionHandler {
 
     private static List<ItemError> tranformItemErrors( MessageSourceAccessor messageAccessor, final String objectName,
                                                        List<ObjectError> objectErrors ) {
-        final String lang = LocaleContextHolder.getLocale().getLanguage(); 
+        final String lang = LocaleContextHolder.getLocale().getLanguage();
         List<ItemError> errors = new ArrayList<>();
         for ( ObjectError objectError : objectErrors ) {
             ItemError item = new ItemError();
@@ -139,7 +144,7 @@ public class GeneralExceptionHandler {
         NoHandlerFoundException.class,
         AsyncRequestTimeoutException.class })
     public final ResponseEntity<Object> handleException( Exception e, WebRequest request ) {
-        logger.debug( "handleBadRequestException" );
+        logger.debug( "handleException" );
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         String msg = messageAccessor.getMessage( "exception.message." + e.getClass().getSimpleName(), e.getMessage() );
         ErrorMessage message = new ErrorMessage();
@@ -181,23 +186,47 @@ public class GeneralExceptionHandler {
         return handleExceptionInternal( e, message, headers, httpStatus, request );
     }
 
+    @ExceptionHandler({ ServiceException.class })
+    protected ResponseEntity<Object> handleServiceException( ServiceException se, WebRequest request ) {
+        logger.debug( "handleServiceException" );
+        ErrorMessage message = se.getErrorMessage();
+        if ( message.getTransactionId() == null ) {
+            message.setTransactionId( ContextHolder.tXID() );
+        }
+        HttpStatus httpStatus = null;
+        if ( message.getStatus() > 0 ) {
+            httpStatus = HttpStatus.valueOf( message.getStatus() );
+        } else {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType( MediaType.APPLICATION_JSON_UTF8 );
+        return handleExceptionInternal( se, message, headers, httpStatus, request );
+    }
+
     @ExceptionHandler({ GeneralException.class })
     protected ResponseEntity<Object> handleGeneralException( GeneralException ge, WebRequest request ) {
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         logger.debug( "handleGeneralException" );
         ErrorMessage message = ge.getErrorMessage();
+        Long tXID = (Long) request.getAttribute( Constants.TXID, WebRequest.SCOPE_REQUEST );
+        if ( tXID == null ) {
+            tXID = ContextHolder.tXID();
+        }
+        message.setTransactionId( tXID );
         if ( request instanceof HttpServletRequest ) {
             HttpServletRequest req = (HttpServletRequest) request;
             message.setUrl( req.getRequestURL().toString() );
-            message.setTransactionId( (Long) request.getAttribute( Constants.TXID, WebRequest.SCOPE_REQUEST ) );
         } else if ( request instanceof ServletWebRequest ) {
             ServletWebRequest req = (ServletWebRequest) request;
             message.setUrl( req.getRequest().getRequestURL().toString() );
-            message.setTransactionId( (Long) req.getAttribute( Constants.TXID, WebRequest.SCOPE_REQUEST ) );
+        } else {
+            logger.info( "WebRequest: {}", request.getClass().getName() );
         }
         Exception e = ge.getException();
-        logger.debug( "ge.getException(): " + e.getClass().getName() );
-        message.setDetailMessage( e.getMessage() );
+        logger.debug( "ge.getException(): " + e.getClass().getSimpleName() );
+        message.setMessage( e.getMessage() );
+        message.setDetailMessage( "{ " + e.getClass().getName() + ": " + e.getMessage() + " }" );
         //        if ( e instanceof DataAccessException ) {
         //            message.setMessage( messageAccessor.getMessage( "exception.message.dataAccessException",
         //                                                            "Error occured while data accessing." ) );
@@ -211,20 +240,26 @@ public class GeneralExceptionHandler {
             message.setMessage( messageAccessor.getMessage( "exception.message.invalidRequestException", "" ) );
             List<ItemError> itemErrors = tranformItemErrors( messageAccessor, objectName, errors.getAllErrors() );
             message.setFieldErrors( itemErrors );
-        } else if ( e instanceof BadRequestException ) {
-            httpStatus = HttpStatus.BAD_REQUEST;
+        } else if ( e instanceof TraceableException ) {
+            TraceableException te = (TraceableException) e;
+            httpStatus = te.getHttpStatus();
             message.setStatus( httpStatus.value() );
-            message.setMessage( messageAccessor.getMessage( "exception.message.badRequestException", "" ) );
-            // BadRequestException bre = (BadRequestException) e;
-            // Errors errors = bre.getErrors();
-            // List<ItemError> itemErrors = tranformItemErrors( messageAccessor, errors.getAllErrors() );
-            // LOGGER.debug( "itemErrors: " + itemErrors);
-            // message.setFieldErrors( itemErrors );
-        } else if ( e instanceof NotAcceptableException ) {
-            httpStatus = HttpStatus.NOT_ACCEPTABLE;
+            message.setMessage( te.getMessage() );
+        } else if ( e instanceof org.springframework.security.core.AuthenticationException ) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
             message.setStatus( httpStatus.value() );
-            message.setMessage( messageAccessor.getMessage( "exception.message.notAcceptableException", "" ) );
-        } else if ( e instanceof MethodArgumentNotValidException ) {
+            message.setMessage( "Unauthorized" );
+        } else if ( e instanceof org.springframework.security.access.AccessDeniedException ) {
+            httpStatus = HttpStatus.FORBIDDEN;
+            message.setStatus( httpStatus.value() );
+            message.setMessage( "Forbidden" );
+        }
+        //        else if ( e instanceof NotAcceptableException ) {
+        //            httpStatus = HttpStatus.NOT_ACCEPTABLE;
+        //            message.setStatus( httpStatus.value() );
+        //            message.setMessage( messageAccessor.getMessage( "exception.message.notAcceptableException", "" ) );
+        //        }
+        else if ( e instanceof MethodArgumentNotValidException ) {
             httpStatus = HttpStatus.BAD_REQUEST;
             MethodArgumentNotValidException mae = (MethodArgumentNotValidException) e;
             String objectName = mae.getBindingResult().getTarget().getClass().getSimpleName();

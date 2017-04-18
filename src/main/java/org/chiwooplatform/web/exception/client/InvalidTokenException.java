@@ -1,24 +1,24 @@
 package org.chiwooplatform.web.exception.client;
 
-import org.chiwooplatform.web.message.ErrorMessage;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 
+import org.chiwooplatform.web.message.ErrorMessage;
+
+@SuppressWarnings("serial")
 public class InvalidTokenException
-    // extends AuthenticationException
-    extends RuntimeException {
-
-    private static final long serialVersionUID = 5463442450167301420L;
+    extends AuthenticationException {
 
     private final ErrorMessage message = new ErrorMessage();
 
     private final Exception exception;
 
-    public InvalidTokenException( final String url, Long transactionId ) {
-        this( url, null, transactionId );
+    public InvalidTokenException( final String url, Long tXID ) {
+        this( url, null, tXID );
     }
 
     public InvalidTokenException( final String url, HttpStatus httpStatus, Long transactionId ) {
-        super( "Invalid token error." );
+        super( "Authentication token is not valid." );
         this.exception = this;
         message.setMessage( ( httpStatus != null ? httpStatus.getReasonPhrase()
                                                  : HttpStatus.UNAUTHORIZED.getReasonPhrase() ) );

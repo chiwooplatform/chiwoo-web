@@ -8,6 +8,8 @@ public final class Constants {
 
     public static final String CONTENT_TYPE = "Content-Type";
 
+    public static final String LANGUAGE = "lang";
+
     public static final String LOCAL_TIMEZONE = "Asia/Seoul";
 
     public static final String UTC_TIMEZONE = "GMT"; // TimeZone.getTimeZone("GMT").getID();
@@ -34,7 +36,15 @@ public final class Constants {
 
     public static final String TXID = "TXID";
 
-    public static final String AUTH_TOKEN = "X-Auth-Token";
+    public static final String SPRING_SECURITY_CONTEXT = "SPRING_SECURITY_CONTEXT";
+
+    public static final String PRINCIPAL = "Principal";
+
+    public static final String AUTH_TOKEN = "x-auth-token";
+
+    public static final String TOKEN = "token";
+
+    public static final String PERM_CODE = "permCd";
 
     public static final String VALID_MESSAGE_PREFIX = "validation.";
 
