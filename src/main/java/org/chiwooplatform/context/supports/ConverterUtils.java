@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import java.beans.PropertyDescriptor;
@@ -576,5 +578,39 @@ public final class ConverterUtils {
             throw new RuntimeException( "Source or Target object is null." );
         }
         BeanUtils.copyProperties( source, target );
+    }
+
+    private final static char BL = ' ';
+
+    static public String mapToString( Map<String, Object> source ) {
+        if ( source == null ) {
+            return null;
+        }
+        StringBuilder ret = new StringBuilder();
+        ret.append( "{" );
+        Iterator<Entry<String, Object>> iter = source.entrySet().iterator();
+        while ( iter.hasNext() ) {
+            ret.append( BL );
+            Entry<String, ?> entry = iter.next();
+            ret.append( entry.getKey() );
+            ret.append( '=' ).append( '"' );
+            Object v = entry.getValue();
+            if ( v == null ) {
+                ret.append( "{null}" );
+            } else {
+                if ( v instanceof String ) {
+                    ret.append( v );
+                } else {
+                    ret.append( v.toString() );
+                }
+            }
+            ret.append( '"' );
+            if ( iter.hasNext() ) {
+                ret.append( ',' );
+            }
+        }
+        ret.append( BL );
+        ret.append( "}" );
+        return ret.toString();
     }
 }

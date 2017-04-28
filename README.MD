@@ -16,4 +16,5 @@ chiwoo-web 모듈은 다음과 같은 기능적 Feature 를 지원 합니다.
 ## 사전 준비사항 
 MARIADB, REDIS 캐시 서버를 사전에 구성 해야 합니다.
 
-
+- 로컬 maven repository 에 설치 하려면 아래 명령어를 실행해 주세요.
+mvn clean source:jar javadoc:jar install
