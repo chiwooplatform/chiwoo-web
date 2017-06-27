@@ -4,7 +4,7 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:mariadb://192.168.56.11:3306/SAMPLES
+    url: jdbc:mariadb://localhost:3306/CHIWOOSAMPLES
     username: aider
     password: aider1234
     driver-class-name: org.mariadb.jdbc.Driver
@@ -14,8 +14,8 @@ spring:
 # REDIS (RedisProperties)
   redis:
     database: 0
-    host: 192.168.56.11
-    password: root1234
+    host: localhost
+    password: aider1234
     # url: redis://user:password@example.com:6379
     port: 6379
     pool:

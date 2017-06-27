@@ -6,10 +6,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 import org.chiwooplatform.context.model.ParameterMap;
-import org.chiwooplatform.security.AuthUser;
-import org.chiwooplatform.security.SecurityUserManagerService;
-import org.chiwooplatform.security.UserPrincipal;
 import org.chiwooplatform.security.authentication.RestAuthenticationToken;
+import org.chiwooplatform.security.core.UserPrincipal;
+import org.chiwooplatform.security.core.UserPrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,7 @@ public class RestAuthenticationProvider
     private final transient Logger logger = LoggerFactory.getLogger( RestAuthenticationProvider.class );
 
     @Autowired
-    private SecurityUserManagerService userManagerService;
+    private UserPrincipalResolver principalResolver;
 
     public RestAuthenticationProvider() {
         super();
@@ -48,11 +47,10 @@ public class RestAuthenticationProvider
             ParameterMap param = new ParameterMap();
             param.put( "token", token );
             param.put( "sessionId", sessionId );
-            AuthUser user = userManagerService.getUser( param );
+            UserPrincipal user = principalResolver.getUserPrincipal( param );
             if ( user != null ) {
-                UserPrincipal userPrincipal = new UserPrincipal( user.userId(), user.userNo() );
-                final RestAuthenticationToken newAuthentication = new RestAuthenticationToken( token, sessionId,
-                                                                                               userPrincipal, null );
+                final RestAuthenticationToken newAuthentication = new RestAuthenticationToken( token, sessionId, user,
+                                                                                               null );
                 logger.debug( "newAuthentication: {}", newAuthentication );
                 return newAuthentication;
             }

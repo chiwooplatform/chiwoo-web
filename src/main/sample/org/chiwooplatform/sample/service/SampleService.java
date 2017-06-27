@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-04-12
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.sample.service;
 
 import java.util.ArrayList;

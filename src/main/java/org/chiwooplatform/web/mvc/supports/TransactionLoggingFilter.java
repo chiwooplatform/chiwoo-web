@@ -8,11 +8,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.chiwooplatform.context.Constants;
 import org.chiwooplatform.context.ContextHolder;
 import org.slf4j.MDC;
-
 
 /**
  * <pre>
@@ -32,6 +34,22 @@ import org.slf4j.MDC;
 public class TransactionLoggingFilter
     implements Filter {
 
+    private static final String ANONYMOUS_PRINCIPAL = "anonymous";
+
+    String principal( ServletRequest request ) {
+        try {
+            return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        } catch ( Exception e ) {
+            if ( request instanceof HttpServletRequest ) {
+                HttpServletRequest req = (HttpServletRequest) request;
+                if ( req.getUserPrincipal() != null ) {
+                    return req.getUserPrincipal().getName();
+                }
+            }
+        }
+        return ANONYMOUS_PRINCIPAL;
+    }
+
     /**
      * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse,
      *      javax.servlet.FilterChain)
@@ -44,7 +62,7 @@ public class TransactionLoggingFilter
             tXID = ContextHolder.tXID( true );
         }
         MDC.put( Constants.TXID, tXID.toString() );
-        MDC.put( Constants.PRINCIPAL, "1233" );
+        MDC.put( Constants.PRINCIPAL, principal( request ) );
         request.setAttribute( Constants.TXID, tXID );
         try {
             chain.doFilter( request, response );

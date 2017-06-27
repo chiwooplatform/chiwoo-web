@@ -8,11 +8,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
 
-import org.chiwooplatform.security.SecurityUserManagerService;
+import org.chiwooplatform.security.core.UserPrincipalResolver;
 import org.chiwooplatform.security.supports.AnonymousSessionlessAuthenticationFilter;
 import org.chiwooplatform.security.supports.RestAuthenticationFailureHandler;
 import org.chiwooplatform.security.supports.RestAuthenticationFilter;
@@ -53,7 +54,7 @@ public class SecurityConfiguration
         http.cors().configurationSource( cors );
         // http.addFilter( new WebAsyncManagerIntegrationFilter() ).exceptionHandling();
         http.headers();
-        // .sessionManagement().and()
+        http.sessionManagement().sessionCreationPolicy( SessionCreationPolicy.STATELESS ); // THIS IS FOR RESTFUL-API
         // .securityContext().and()
         http.addFilterBefore( new AnonymousSessionlessAuthenticationFilter(), SessionManagementFilter.class );
         // http.requestCache().and().anonymous();
@@ -71,9 +72,9 @@ public class SecurityConfiguration
     }
 
     @Bean
-    public SecurityUserManagerService securityUserManagerService() {
-        final MockSecurityUserManagerService securityUserManagerService = new MockSecurityUserManagerService();
-        return securityUserManagerService;
+    public UserPrincipalResolver userPrincipalResolver() {
+        final MockSecurityUserManagerService principalResolver = new MockSecurityUserManagerService();
+        return principalResolver;
     }
 
     @Bean
@@ -116,7 +117,8 @@ public class SecurityConfiguration
                                                              .password( "bc9dd4658e06498fb7917c12bac3f969" )
                                                              .authorities( "API_ComCode.add", "API_ComCode.get",
                                                                            "API_ComCode.query", "API_ComCode.remove",
-                                                                           "API_ComCode.enable", "API_ComCode.disable" )
+                                                                           "API_ComCode.enable", "API_ComCode.disable",
+                                                                           "API_ComAuth.get" )
                                                              .build(),
                                                          100001 ),
                                            new MockUser( User.withUsername( "apple" )

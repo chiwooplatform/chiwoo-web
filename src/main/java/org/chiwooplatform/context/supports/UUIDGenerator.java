@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-04-06
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.context.supports;
 
 import java.util.UUID;
@@ -40,6 +35,6 @@ public class UUIDGenerator {
     }
 
     public static String getTXID() {
-        return Long.toString( ByteBuffer.wrap( uuid().getBytes() ).asLongBuffer().get() );
+        return Long.toString( tXID() );
     }
 }

@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-04-13
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.security.supports;
 
 import java.io.Serializable;
@@ -13,8 +8,8 @@ import org.springframework.security.core.Authentication;
 
 import org.chiwooplatform.context.Constants;
 import org.chiwooplatform.context.model.ParameterMap;
-import org.chiwooplatform.security.SecurityUserManagerService;
 import org.chiwooplatform.security.authentication.RestAuthenticationToken;
+import org.chiwooplatform.security.core.PermissionResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +19,7 @@ public class TokenPermissionEvaluator
     private final transient Logger logger = LoggerFactory.getLogger( TokenPermissionEvaluator.class );
 
     @Autowired
-    private SecurityUserManagerService userManagerService;
+    private PermissionResolver permissionResolver;
 
     public TokenPermissionEvaluator() {
         super();
@@ -43,7 +38,7 @@ public class TokenPermissionEvaluator
         ParameterMap param = new ParameterMap();
         param.put( Constants.TOKEN, requestToken );
         param.put( Constants.PERM_CODE, permissionId );
-        boolean valid = userManagerService.hasPermission( param );
+        boolean valid = permissionResolver.hasPermission( param );
         return valid;
     }
 

@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.chiwooplatform.context.supports.UUIDGenerator;
-import org.chiwooplatform.security.UserPrincipal;
+import org.chiwooplatform.security.core.UserPrincipal; 
 
  
 
@@ -84,12 +84,12 @@ public class ContextHolder {
     }
 
     /**
-     * @return userseq It's internal userid.
+     * @return userno It's internal userid.
      */
-    public static Integer userseq() {
+    public static Integer userno() {
         UserPrincipal principal = ContextHolder.principal();
         if ( principal != null ) {
-            return principal.getUserSeq();
+            return principal.getUserno();
         }
         return null;
     }

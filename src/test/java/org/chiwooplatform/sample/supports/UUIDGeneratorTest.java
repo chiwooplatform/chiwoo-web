@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-04-07
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.sample.supports;
 
 import org.chiwooplatform.context.supports.UUIDGenerator;

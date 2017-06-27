@@ -3,18 +3,21 @@ package org.chiwooplatform.security.supports.mock;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.chiwooplatform.context.Constants;
 import org.chiwooplatform.context.model.ParameterMap;
-import org.chiwooplatform.security.AuthUser;
-import org.chiwooplatform.security.SecurityUserManagerService;
+import org.chiwooplatform.security.core.PermissionResolver;
+import org.chiwooplatform.security.core.UserAuthoritiesResolver;
+import org.chiwooplatform.security.core.UserPrincipal;
+import org.chiwooplatform.security.core.UserPrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MockSecurityUserManagerService
-    implements SecurityUserManagerService {
+    implements UserPrincipalResolver, UserAuthoritiesResolver, PermissionResolver {
 
     private final transient Logger logger = LoggerFactory.getLogger( MockSecurityUserManagerService.class );
 
@@ -24,10 +27,18 @@ public class MockSecurityUserManagerService
     public MockSecurityUserManagerService() {
     }
 
-    public AuthUser getUser( ParameterMap param )
+    @Override
+    public UserPrincipal getUserPrincipal( ParameterMap param )
+        throws AuthenticationException {
+        String token = param.getString( Constants.TOKEN );
+        UserPrincipal user = userManager.getUserByToken( token );
+        return user;
+    }
+
+    public UserPrincipal getUser( ParameterMap param )
         throws UsernameNotFoundException {
         String token = param.getString( Constants.TOKEN );
-        AuthUser user = userManager.getUserByToken( token );
+        UserPrincipal user = userManager.getUserByToken( token );
         return user;
     }
 

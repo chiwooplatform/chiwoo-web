@@ -12,7 +12,7 @@ import org.chiwooplatform.security.core.UserPrincipal;
  
 
 @SuppressWarnings("serial")
-public class RestAuthenticationToken
+public class WebAuthenticationToken
     extends AbstractAuthenticationToken {
 
     private final String token;
@@ -24,7 +24,7 @@ public class RestAuthenticationToken
      * @param sessionId ssession id of HttpSession.
      * @param authorities Collection of granted authorities.
      */
-    public RestAuthenticationToken( String token, String sessionId,
+    public WebAuthenticationToken( String token, String sessionId,
                                     Collection<? extends GrantedAuthority> authorities ) {
         super( authorities );
         this.token = token;
@@ -38,7 +38,7 @@ public class RestAuthenticationToken
      * @param principal This is can be used to represent any entity, such as an individual, a corporation, and a login id.
      * @param authorities Collection of granted authorities.
      */
-    public RestAuthenticationToken( String token, String sessionId, UserPrincipal principal,
+    public WebAuthenticationToken( String token, String sessionId, UserPrincipal principal,
                                     Collection<? extends GrantedAuthority> authorities ) {
         super( authorities );
         this.token = token;

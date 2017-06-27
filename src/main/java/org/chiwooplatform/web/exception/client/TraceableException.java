@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-04-13
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.web.exception.client;
 
 import java.util.Date;

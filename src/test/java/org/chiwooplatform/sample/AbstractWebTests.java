@@ -47,10 +47,34 @@ public abstract class AbstractWebTests<T>
         return OBJECTMAPPER.writeValueAsString( object );
     }
 
-    private String token = "X";
+    private String token = "bc9dd4658e06498fb7917c12bac3f969";
 
     protected final String token() {
         return this.token;
+    }
+
+    protected enum USER {
+                         bob("bob", "bc9dd4658e06498fb7917c12bac3f969"),
+                         apple("apple", "9d787279cd3d48fa863c8dfdec255b25"),
+                         banana("banana", "ccabe36b77784631b2caf30552d313e8"),
+                         kssy("kssy", "d107406bab4b4daeb2e85f75f2a22aa2"),;
+
+        String name;
+
+        String token;
+
+        USER( String name, String token ) {
+            this.name = name;
+            this.token = token;
+        }
+
+        public String user() {
+            return this.name;
+        }
+
+        public String token() {
+            return this.token;
+        }
     }
 
     @Test

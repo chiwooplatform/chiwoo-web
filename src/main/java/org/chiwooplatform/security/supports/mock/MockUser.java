@@ -6,10 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import org.chiwooplatform.context.model.ParameterMap;
-import org.chiwooplatform.security.AuthUser;
+import org.chiwooplatform.security.core.UserPrincipal;
 
 public class MockUser
-    implements AuthUser {
+    implements UserPrincipal {
 
     final ParameterMap param = new ParameterMap();
 
@@ -28,15 +28,18 @@ public class MockUser
     }
 
     @Override
-    public String userId() {
+    public String getUserid() {
         return user.getUsername();
     }
 
-    /**
-     * @return the userNo
-     */
-    public Integer userNo() {
-        return userNo;
+    @Override
+    public Integer getUserno() {
+        return this.userNo;
+    }
+
+    @Override
+    public String getName() {
+        return user.getUsername();
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {

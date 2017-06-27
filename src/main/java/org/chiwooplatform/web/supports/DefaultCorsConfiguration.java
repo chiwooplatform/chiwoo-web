@@ -1,8 +1,3 @@
-/**
- * @author seonbo.shim
- * @version 1.0, 2017-04-14
- * @copyright BESPIN GLOBAL
- */
 package org.chiwooplatform.web.supports;
 
 import javax.servlet.http.HttpServletRequest;
