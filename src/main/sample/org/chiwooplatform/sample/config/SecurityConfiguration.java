@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
 
+import org.chiwooplatform.security.core.PermissionResolver;
 import org.chiwooplatform.security.core.UserPrincipalResolver;
 import org.chiwooplatform.security.supports.AnonymousSessionlessAuthenticationFilter;
 import org.chiwooplatform.security.supports.RestAuthenticationFailureHandler;
@@ -20,9 +21,10 @@ import org.chiwooplatform.security.supports.RestAuthenticationFilter;
 import org.chiwooplatform.security.supports.RestAuthenticationProvider;
 import org.chiwooplatform.security.supports.RestAuthenticationSuccessHandler;
 import org.chiwooplatform.security.supports.TokenPermissionEvaluator;
-import org.chiwooplatform.security.supports.mock.MockSecurityUserManagerService;
+import org.chiwooplatform.security.supports.mock.MockPermissionResolver;
 import org.chiwooplatform.security.supports.mock.MockUser;
 import org.chiwooplatform.security.supports.mock.MockUserDetailsManager;
+import org.chiwooplatform.security.supports.mock.MockUserPrincipalResolver;
 import org.chiwooplatform.web.supports.DefaultCorsConfiguration;
 
 @EnableWebSecurity(debug = false)
@@ -73,13 +75,19 @@ public class SecurityConfiguration
 
     @Bean
     public UserPrincipalResolver userPrincipalResolver() {
-        final MockSecurityUserManagerService principalResolver = new MockSecurityUserManagerService();
+        final MockUserPrincipalResolver principalResolver = new MockUserPrincipalResolver();
         return principalResolver;
     }
 
     @Bean
+    public PermissionResolver permissionResolver() {
+        final MockPermissionResolver permissionResolver = new MockPermissionResolver();
+        return permissionResolver;
+    }
+
+    @Bean
     public AuthenticationProvider restAuthenticationProvider() {
-        final RestAuthenticationProvider restAuthenticationProvider = new RestAuthenticationProvider();
+        final RestAuthenticationProvider restAuthenticationProvider = new RestAuthenticationProvider( userPrincipalResolver() );
         return restAuthenticationProvider;
     }
 
@@ -103,7 +111,7 @@ public class SecurityConfiguration
     //    }
     @Bean
     public TokenPermissionEvaluator permissionEvaluator() {
-        final TokenPermissionEvaluator permissionEvaluator = new TokenPermissionEvaluator();
+        final TokenPermissionEvaluator permissionEvaluator = new TokenPermissionEvaluator( permissionResolver() );
         return permissionEvaluator;
     }
 

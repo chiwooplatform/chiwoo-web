@@ -2,7 +2,6 @@ package org.chiwooplatform.security.supports;
 
 import java.io.Serializable;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 
@@ -18,11 +17,11 @@ public class TokenPermissionEvaluator
 
     private final transient Logger logger = LoggerFactory.getLogger( TokenPermissionEvaluator.class );
 
-    @Autowired
-    private PermissionResolver permissionResolver;
+    private final PermissionResolver permissionResolver;
 
-    public TokenPermissionEvaluator() {
+    public TokenPermissionEvaluator( PermissionResolver permissionResolver ) {
         super();
+        this.permissionResolver = permissionResolver;
     }
 
     @Override

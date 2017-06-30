@@ -1,6 +1,5 @@
 package org.chiwooplatform.security.supports;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -27,11 +26,11 @@ public class RestAuthenticationProvider
 
     private final transient Logger logger = LoggerFactory.getLogger( RestAuthenticationProvider.class );
 
-    @Autowired
-    private UserPrincipalResolver principalResolver;
+    private final UserPrincipalResolver principalResolver;
 
-    public RestAuthenticationProvider() {
+    public RestAuthenticationProvider( UserPrincipalResolver principalResolver ) {
         super();
+        this.principalResolver = principalResolver;
     }
 
     /**

@@ -3,43 +3,23 @@ package org.chiwooplatform.security.supports.mock;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.chiwooplatform.context.Constants;
 import org.chiwooplatform.context.model.ParameterMap;
 import org.chiwooplatform.security.core.PermissionResolver;
-import org.chiwooplatform.security.core.UserAuthoritiesResolver;
-import org.chiwooplatform.security.core.UserPrincipal;
-import org.chiwooplatform.security.core.UserPrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MockSecurityUserManagerService
-    implements UserPrincipalResolver, UserAuthoritiesResolver, PermissionResolver {
+public class MockPermissionResolver
+    implements PermissionResolver {
 
-    private final transient Logger logger = LoggerFactory.getLogger( MockSecurityUserManagerService.class );
+    private final transient Logger logger = LoggerFactory.getLogger( MockPermissionResolver.class );
 
     @Autowired
     private MockUserDetailsManager userManager;
 
-    public MockSecurityUserManagerService() {
-    }
-
-    @Override
-    public UserPrincipal getUserPrincipal( ParameterMap param )
-        throws AuthenticationException {
-        String token = param.getString( Constants.TOKEN );
-        UserPrincipal user = userManager.getUserByToken( token );
-        return user;
-    }
-
-    public UserPrincipal getUser( ParameterMap param )
-        throws UsernameNotFoundException {
-        String token = param.getString( Constants.TOKEN );
-        UserPrincipal user = userManager.getUserByToken( token );
-        return user;
+    public MockPermissionResolver() {
     }
 
     @Override
@@ -59,9 +39,5 @@ public class MockSecurityUserManagerService
         }
         logger.debug( "Has not permission. permCd: {}", permCd );
         return false;
-    }
-
-    public Collection<? extends GrantedAuthority> getAuthorities( ParameterMap param ) {
-        return null;
     }
 }
